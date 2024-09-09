@@ -7,6 +7,7 @@ This tool is designed to detect Cross-Site Scripting (XSS) vulnerabilities in we
 ## Key Differences
 
 - **Alert Detection**: This tool focuses on finding URLs that generate alert boxes as a result of XSS payloads. Other tools may only report potential vulnerabilities without indicating whether an alert was triggered.
+- **Comprehensive Parameter Testing**: Many XSS testing tools do not test all parameters for vulnerabilities. This tool requires the `Gxss` tool to be run first to identify reflected parameters, ensuring a thorough assessment of potential XSS vulnerabilities.
 - **Ease of Use**: With a simple command-line interface, users can easily specify URLs and payloads to test.
 
 ## Requirements
