@@ -1,8 +1,17 @@
 # XSS Detection Tool
 
+## Note
+
+This XSS Detection Tool works in conjunction with the Gxss tool. Ensure that the Gxss tool is run first to set up the necessary conditions for testing.
+
 ## Overview
 
 This tool is designed to detect Cross-Site Scripting (XSS) vulnerabilities in web applications. It works by testing specified URLs with various XSS payloads.
+
+## Key Differences
+
+- **Alert Detection**: This tool focuses on finding URLs that generate alert boxes as a result of XSS payloads. Other tools may only report potential vulnerabilities without indicating whether an alert was triggered.
+- **Ease of Use**: With a simple command-line interface, users can easily specify URLs and payloads to test.
 
 ## Requirements
 
@@ -12,7 +21,3 @@ This tool is designed to detect Cross-Site Scripting (XSS) vulnerabilities in we
 ### Python Packages
 
 To install the required Python packages, create a `requirements.txt` file with the following content:
-
-### Note
-
-This XSS Detection Tool works in conjunction with the Gxss tool. Ensure that the Gxss tool is run first to set up the necessary conditions for testing.
