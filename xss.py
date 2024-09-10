@@ -86,4 +86,4 @@ def main():
             test_xss_with_selenium(url, payload)
 
 if __name__ == "__main__":
-    main()  i have written this
+    main()
