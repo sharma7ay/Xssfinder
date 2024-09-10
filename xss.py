@@ -1,11 +1,7 @@
 import argparse
 import time
-import logging
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 
 # Color codes
@@ -13,54 +9,56 @@ RED = '\033[91m'
 BLUE = '\033[94m'
 END_COLOR = '\033[0m'
 
-# Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-
+# Function to read URLs from a file
 def read_urls_from_file(filename):
-    """Read URLs from a specified file."""
     try:
         with open(filename, 'r') as file:
-            urls = [url.strip() for url in file.readlines()]
+            urls = file.readlines()
+            urls = [url.strip() for url in urls]
             return urls
-    except FileNotFoundError:
-        logging.error(f"{RED}File not found: {filename}{END_COLOR}")
-        return []
     except Exception as e:
-        logging.error(f"{RED}Error reading URLs from file: {e}{END_COLOR}")
+        print(f"{RED}Error reading URLs from file: {e}{END_COLOR}")
         return []
 
+# Function to read XSS payloads from a file
 def read_payloads_from_file(filename):
-    """Read XSS payloads from a specified file."""
     try:
         with open(filename, 'r') as file:
-            payloads = [payload.strip() for payload in file.readlines()]
+            payloads = file.readlines()
+            payloads = [payload.strip() for payload in payloads]
             return payloads
-    except FileNotFoundError:
-        logging.error(f"{RED}File not found: {filename}{END_COLOR}")
-        return []
     except Exception as e:
-        logging.error(f"{RED}Error reading payloads from file: {e}{END_COLOR}")
+        print(f"{RED}Error reading payloads from file: {e}{END_COLOR}")
         return []
 
+# Function to test XSS with Selenium
 def test_xss_with_selenium(url, payload):
-    """Test the specified URL with the provided XSS payload."""
+    # Replace 'Gxss' with the XSS payload
     test_url = url.replace("Gxss", payload)
+
+    # Set up Selenium WebDriver
     options = webdriver.ChromeOptions()
-    options.add_argument('--headless')
+    options.add_argument('--headless')  # Run headless if you don't want a GUI
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
     try:
         driver.get(test_url)
-        # Wait for alert to be present
-        WebDriverWait(driver, 10).until(EC.alert_is_present())
-        alert = driver.switch_to.alert
-        logging.info(f"{RED}Alert box triggered in {test_url}: {alert.text}{END_COLOR}")
-        alert.accept()
+        time.sleep(2)  # Wait for the page to load
+
+        # Check for alert
+        try:
+            alert = driver.switch_to.alert
+            if alert:
+                print(f"{RED}Alert box triggered in {test_url}: {alert.text}{END_COLOR}")
+                alert.accept()  # Close the alert
+        except Exception:
+            print(f"{BLUE}No alert box in {test_url}{END_COLOR}")
     except Exception as e:
-        logging.info(f"{BLUE}No alert box in {test_url} or error occurred: {e}{END_COLOR}")
+        print(f"{RED}Error testing XSS in {test_url}: {e}{END_COLOR}")
     finally:
         driver.quit()
 
+# Main function
 def main():
     parser = argparse.ArgumentParser(description='Test for XSS vulnerabilities.')
     group = parser.add_mutually_exclusive_group(required=True)
@@ -73,12 +71,19 @@ def main():
 
     args = parser.parse_args()
 
-    urls = [args.url] if args.url else read_urls_from_file(args.url_list)
-    payloads = [args.payload] if args.payload else read_payloads_from_file(args.payload_list)
+    if args.url:
+        urls = [args.url]
+    elif args.url_list:
+        urls = read_urls_from_file(args.url_list)
+
+    if args.payload:
+        payloads = [args.payload]
+    elif args.payload_list:
+        payloads = read_payloads_from_file(args.payload_list)
 
     for url in urls:
         for payload in payloads:
             test_xss_with_selenium(url, payload)
 
 if __name__ == "__main__":
-    main()
+    main()  i have written this
